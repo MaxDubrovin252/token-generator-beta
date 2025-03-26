@@ -2,7 +2,9 @@ package sqlite
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
+	"token-generator/pkg/storage"
 
 	_ "github.com/mattn/go-sqlite3"
 )
@@ -66,4 +68,28 @@ func (s *Storage) NewToken(message string, token string) (int64, error) {
 	}
 
 	return id, nil
+}
+
+func (s *Storage) GetMessage(token string) (string, error) {
+	const op = "sqlite.GetToken"
+
+	stmt, err := s.db.Prepare(`SELECT message FROM tokes WHERE token = ?`)
+
+	if err != nil {
+		return "", fmt.Errorf("%s:%w", op, err)
+	}
+
+	var resmessage string
+
+	err = stmt.QueryRow(token).Scan(&resmessage)
+
+	if errors.Is(err, sql.ErrNoRows) {
+		return "", storage.ErrTokenNotFound
+	}
+
+	if err != nil {
+		return "", fmt.Errorf("%s:%w", op, err)
+	}
+
+	return resmessage, nil
 }

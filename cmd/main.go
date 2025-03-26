@@ -2,10 +2,13 @@ package main
 
 import (
 	"log"
+	"log/slog"
 	"token-generator/config"
 	"token-generator/logger"
 	"token-generator/logger/sl"
+	"token-generator/pkg/handlers"
 	"token-generator/pkg/storage/sqlite"
+	"token-generator/server"
 
 	"github.com/spf13/viper"
 )
@@ -26,6 +29,12 @@ func main() {
 		log.Error("cannot connect to db", sl.Err(err))
 	}
 
-	_ = storage
-	log.Info("db created")
+	router := handlers.InitRouter(log, storage)
+	srv := new(server.SRV)
+
+	log.Info("server run on port:", slog.String("port", viper.GetString("port")))
+	if err := srv.Start(viper.GetString("port"), router); err != nil {
+		log.Error("cannot run server", sl.Err(err))
+	}
+
 }
