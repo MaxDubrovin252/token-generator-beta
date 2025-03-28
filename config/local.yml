@@ -3,6 +3,6 @@ port : "8003"
 db :
   port : "5433"
   host : "localhost"
-  dbname : "token-generator"
+  dbname : "postgres"
   username : "postgres"
   sslmode : "disable"
