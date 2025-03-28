@@ -1,5 +1,0 @@
-env : "local"
-storage_path : "./storage/storage.db"
-port : "7788"
-timeout : 3s
-idle_timeout : 60s
