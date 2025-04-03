@@ -1,14 +1,20 @@
 package service
 
-import "token-generator/pkg/reposiroty"
+import (
+	"token-generator/pkg/repository"
+)
 
-type Token interface {
+type TokenOP interface {
+	CreateToken(message, token string) (int, error)
+	GetMessage(token string) (string, error)
 }
 
 type Service struct {
-	Token
+	TokenOP
 }
 
-func NewService(repos *reposiroty.Repository) *Service {
-	return &Service{}
+func NewService(repos *repository.Repository) *Service {
+	return &Service{
+		TokenOP: NewCreateService(repos.TokenOP),
+	}
 }

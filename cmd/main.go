@@ -5,9 +5,10 @@ import (
 	"os"
 	"token-generator/config"
 	"token-generator/internal/handler"
-	"token-generator/internal/portgres"
+
 	"token-generator/internal/server"
-	"token-generator/pkg/reposiroty"
+
+	"token-generator/pkg/repository"
 	"token-generator/pkg/service"
 
 	"github.com/joho/godotenv"
@@ -25,7 +26,7 @@ func main() {
 	if err := godotenv.Load(); err != nil {
 		logrus.Errorf("cannot set env:%s", err.Error())
 	}
-	db, err := portgres.NewDB(portgres.ConfigDB{
+	db, err := repository.NewPostgresDB(repository.Config{
 		Port:     viper.GetString("db.port"),
 		Host:     viper.GetString("db.host"),
 		Username: viper.GetString("db.username"),
@@ -37,7 +38,8 @@ func main() {
 	if err != nil {
 		logrus.Errorf("cannot connect to db error:%s", err.Error())
 	}
-	repos := reposiroty.NewRepository(db)
+	logrus.Info("connect to postgres")
+	repos :=repository.NewRepository(db)
 	service := service.NewService(repos)
 	handler := handler.NewHandler(service)
 	srv := new(server.SRV)

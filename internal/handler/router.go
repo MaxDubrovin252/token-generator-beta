@@ -19,8 +19,9 @@ func (h *Handler) InitRoutes() *gin.Engine {
 
 	token := router.Group("/token")
 	{
-		token.POST("/")
-		token.GET("/{token}")
+		token.POST("/", h.PostHandler)
+		token.POST("/get", h.GetMessage)
+
 	}
 	return router
 }
